@@ -16,11 +16,13 @@
 		<mkdir dir="${paths.logs}" />
         <mkdir dir="${paths.reports}/coverage" />
 		<property name="coverage.database" value="${paths.logs}/coverage.db" />
+        <!--
 		<coverage-setup database="${coverage.database}">
 			<fileset dir="src">
 				<include name="**/*.php" />
 			</fileset>
 		</coverage-setup>
+        -->
 		<phpunit printsummary="true" codecoverage="true" haltonfailure="true">
 			<formatter todir="${paths.logs}" type="xml" />
 			<formatter todir="${paths.reports}/coverage" type="clover" />
