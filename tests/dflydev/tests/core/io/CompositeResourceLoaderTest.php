@@ -62,7 +62,7 @@ class CompositeResourceLoaderTest extends \PHPUnit_Framework_TestCase {
         $resource = $resourceLoader->load($location);
         $this->assertEquals('else/'.$location, $resource->filename());
     }
-    public function testAppendingResourceLoaders() {
+    public function testAppendingResourceLoadersIndividually() {
         $location = 'foo.txt';
         $firstResourceLoader = $this->getMock('dflydev\core\io\FileSystemResourceLoader', array('load'), array('anywhere'));
         $firstResourceLoader->expects($this->once())
@@ -77,6 +77,26 @@ class CompositeResourceLoaderTest extends \PHPUnit_Framework_TestCase {
         $resourceLoader = new CompositeResourceLoader();
         $resourceLoader->appendResourceLoader($firstResourceLoader);
         $resourceLoader->appendResourceLoader($secondResourceLoader);
+        $resource = $resourceLoader->load($location);
+        $this->assertEquals('else/'.$location, $resource->filename());
+    }
+    public function testAppendingResourceLoadersTogether() {
+        $location = 'foo.txt';
+        $firstResourceLoader = $this->getMock('dflydev\core\io\FileSystemResourceLoader', array('load'), array('anywhere'));
+        $firstResourceLoader->expects($this->once())
+                            ->method('load')
+                            ->with($this->equalTo($location))
+                            ->will($this->throwException(new \dflydev\core\io\exception\ResourceNotFoundException($location)));
+        $secondResourceLoader = $this->getMock('dflydev\core\io\FileSystemResourceLoader', array('load'), array('else'));
+        $secondResourceLoader->expects($this->once())
+                            ->method('load')
+                            ->with($this->equalTo($location))
+                            ->will($this->returnValue(new \dflydev\core\io\FileSystemResource('else/'.$location)));
+        $resourceLoader = new CompositeResourceLoader();
+        $resourceLoader->appendResourceLoaders(array(
+            $firstResourceLoader,
+            $secondResourceLoader,
+        ));
         $resource = $resourceLoader->load($location);
         $this->assertEquals('else/'.$location, $resource->filename());
     }
