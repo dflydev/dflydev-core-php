@@ -22,14 +22,16 @@ class FileSystemResourceLoaderTest extends \PHPUnit_Framework_TestCase {
     public function testFile() {
         $resourceLoader = new FileSystemResourceLoader(self::$tmpDir);
         $resource = $resourceLoader->load("bar/test.properties");
+        $this->assertTrue($resource->exists(), '->exists() returns true for a resource representing something that exists on the filesystem');
         $this->assertTrue($resource->isFile(), '->isFile() returns true for a resource representing an existing file');
         $this->assertFalse($resource->isDirectory(), '->isDirectory() returns false for a resource representing an existing file');
     }
     public function testDirectory() {
         $resourceLoader = new FileSystemResourceLoader(self::$tmpDir);
         $resource = $resourceLoader->load("bar");
-        $this->assertFalse($resource->isFile(), '->isFile() returns false for a resource representing an existing file');
-        $this->assertTrue($resource->isDirectory(), '->isDirectory() returns true for a resource representing an existing file');
+        $this->assertTrue($resource->exists(), '->exists() returns true for a resource representing something that exists on the filesystem');
+        $this->assertFalse($resource->isFile(), '->isFile() returns false for a resource representing an existing directory');
+        $this->assertTrue($resource->isDirectory(), '->isDirectory() returns true for a resource representing an existing directory');
     }
     public function testMissing() {
         $resourceLoader = new FileSystemResourceLoader(self::$tmpDir);
